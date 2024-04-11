@@ -71,13 +71,13 @@ class GraphicsWindow {
 
     async createWindow() {
         this.window = new BrowserWindow({
-            width: 800,
+            width: 1200,
             height: 600,
-            minWidth: 800,   // Set the minimum width
-            minHeight: 600,  // Set the minimum height
+            // minWidth: 1200,   // Set the minimum width
+            // minHeight: 600,  // Set the minimum height
             // maxHeight: 600,
-            // maxWidth: 800,
-            // resizable: false,
+            // maxWidth: 1200,
+            resizable: false,
             frame: false,
             webPreferences: {
                 nodeIntegration: true,
