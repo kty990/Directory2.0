@@ -240,7 +240,23 @@ body {
 
 
 
+.error,
+.result {
+    padding: 0;
+    margin: 0;
+    padding-left: 5px;
+    margin-top: 15px;
+    width: calc(100% - 5px);
+}
 
+.error {
+    color: #ae0000;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.result {
+    color: var(--text);
+}
 
 
 #terminal {
@@ -259,6 +275,9 @@ body {
     height: 90%;
     border-bottom-style: solid;
     border-color: var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
 #terminal>#cline {
@@ -273,4 +292,23 @@ body {
     outline: unset;
     padding-left: 2%;
     padding-right: 2%;
+}
+
+#terminal>#output::-webkit-scrollbar {
+    width: 2px;
+}
+
+/* Track */
+#terminal>#output::-webkit-scrollbar-track {
+    background: var(--tut-menu);
+}
+
+/* Handle */
+#terminal>#output::-webkit-scrollbar-thumb {
+    background: var(--interaction);
+}
+
+/* Handle on hover */
+#terminal>#output::-webkit-scrollbar-thumb:hover {
+    background: var(--active);
 }

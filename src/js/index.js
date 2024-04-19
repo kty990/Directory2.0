@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const directory = require('./directory');
 const history = require("../../history.json");
+const { commandDict } = require("./commands");
 
 let devToolsOpened = false;
 
@@ -123,11 +124,11 @@ app.on('window-all-closed', () => {
 if (process.platform === 'win32') {
     app.setAppUserModelId('directory2');
 }
-
+/*
 ipcMain.on("dev-refresh", () => {
     graphicsWindow.window.reload();
 })
-
+*/
 ipcMain.on("close", () => {
     graphicsWindow.window.close();
 })
@@ -199,5 +200,19 @@ ipcMain.on("get-cache", (ev, data) => {
     const { key } = data;
     graphicsWindow.window.webContents.send("get-cache", cache[key]);
 })
+ipcMain.on("runCommand", async (ev, data) => {
+    let testIndex = Array.from(Object.keys(commandDict)).indexOf(data[0]);
+    if (testIndex != -1) {
+        //window, dir, ...params
+        data.splice(0, 1);
+        try {
+            let result = await Array.from(Object.values(commandDict))[testIndex].execute(graphicsWindow.window, history.steps[history.index], data);
+            graphicsWindow.window.webContents.send("runCommand", result);
+        } catch (e) {
+            graphicsWindow.window.webContents.send("runCommand", e);
+        }
 
-console.log("Opening");
+    } else {
+        graphicsWindow.window.webContents.send("runCommand", [false, `Unable to find command ${data[0]}`]);
+    }
+})
