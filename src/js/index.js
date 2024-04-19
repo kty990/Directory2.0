@@ -66,7 +66,9 @@ class GraphicsWindow {
             app.on('ready', () => {
                 this.createWindow();
             });
-        } catch (e) { }
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     async createWindow() {
@@ -103,6 +105,9 @@ class GraphicsWindow {
             this.window = null;
         });
 
+        // Only use for debugging
+        // this.window.webContents.openDevTools({ reload: false })
+
     }
 }
 
@@ -116,12 +121,8 @@ app.on('window-all-closed', () => {
 
 
 if (process.platform === 'win32') {
-    app.setAppUserModelId('total_task');
+    app.setAppUserModelId('directory2');
 }
-
-autoUpdater.setFeedURL({
-    url: 'https://github.com/kty990/discordbotmaker/releases'
-});
 
 ipcMain.on("dev-refresh", () => {
     graphicsWindow.window.reload();
@@ -152,7 +153,7 @@ ipcMain.on("getFiles", (ev, ...args) => {
 ipcMain.on("load", () => {
     console.log(`Attempting to set url to ${process.cwd()}`);
     graphicsWindow.window.webContents.send("load", process.cwd());
-    history
+    // history
     addHistory(process.cwd());
 })
 
@@ -181,6 +182,12 @@ ipcMain.on("forward", (ev, data) => {
     fs.writeFile("../../history.json", JSON.stringify(history, null, 2), () => { });
 })
 
+
+ipcMain.on("error", data => {
+    console.log("Error occured:");
+    console.log(data);
+})
+
 const cache = {};
 
 ipcMain.on("edit-cache", (ev, data) => {
@@ -192,3 +199,5 @@ ipcMain.on("get-cache", (ev, data) => {
     const { key } = data;
     graphicsWindow.window.webContents.send("get-cache", cache[key]);
 })
+
+console.log("Opening");

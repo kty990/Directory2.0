@@ -10,6 +10,7 @@
   "author": "Ty Kutcher",
   "license": "MIT",
   "dependencies": {
+    "directory2.0": "file:",
     "electron": "^29.1.3",
     "source-map-support": "^0.5.21"
   }

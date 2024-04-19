@@ -1,3 +1,10 @@
+console.log("Starting home.js");
+
+window.onerror = function (ev, source, line, col, err) {
+    window.api.send("error", source, err);
+    alert(err);
+}
+
 const closeBtn = document.getElementById("close");
 const minBtn = document.getElementById("minimize");
 
