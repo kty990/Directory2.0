@@ -12,20 +12,6 @@ class YTDownload {
     }
 }
 
-class Test {
-    static description = "A test command for development purposes.";
-    static async execute(window, dir, ...params) {
-        return [true];
-    }
-}
-
-class TestError {
-    static description = "A test command for development purposes.";
-    static async execute(window, dir, ...params) {
-        return [false, "test error"];
-    }
-}
-
 class Exec {
     static description = "Executes a windows command. Any relavent output is displayed.\n<i>Syntax: exec [command + arguments]</i>";
     static async execute(window, dir, ...params) {
@@ -45,6 +31,9 @@ class NJSMake {
     static coroutines = {};
     static async execute(window, dir, ...params) {
         let name = params.splice(0, 1)[0];
+        if (this.coroutines[name] != undefined) {
+            return [false, `A Coroutine with the name [${name}] already exists!`];
+        }
         function createCallbackFromString(codeString) {
             try {
                 const func = new Function('data', codeString);
@@ -74,13 +63,20 @@ class Help {
     }
 }
 
+class Clear {
+    static description = "Clears the terminal output.";
+    static async execute(window, dir, ...params) {
+        window.webContents.send("clearOutput");
+        return [true];
+    }
+}
+
 const commandDict = {
     'ytdown': YTDownload,
-    'test': Test,
-    'err': TestError,
     'exec': Exec,
     'njs-make': NJSMake,
-    'help': Help
+    'help': Help,
+    'cls': Clear
 }
 
 

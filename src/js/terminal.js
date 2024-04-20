@@ -54,3 +54,9 @@ window.api.on("displayOutput", str => {
                 ${str}
             </p>`
 })
+
+window.api.on("clearOutput", () => {
+    setTimeout(() => {
+        output.innerHTML = "";
+    }, 100);
+})
