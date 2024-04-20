@@ -45,7 +45,7 @@ class NJSMake {
         }
         let func = createCallbackFromString(params.join(" "));
         if (!func) return [false, 'Error creating Coroutine function.'];
-        let tmp = new Coroutine();
+        let tmp = new Coroutine(func);
         this.coroutines[name] = tmp;
         return [true];
     }
@@ -61,6 +61,55 @@ class NJSDel {
         NJSMake.coroutines[name].stop();
         NJSMake.coroutines[name] = undefined;
         return [true];
+    }
+}
+
+class NJSEdit {
+    static description = "Edits a coroutine for executing NodeJS code, created by <strong>njs-make</strong>.\n<i>Syntax: 'njs-edit [name] [code]'</i>";
+    static coroutines = {};
+    static async execute(window, dir, ...params) {
+        let name = params.splice(0, 1)[0];
+        if (this.coroutines[name] == undefined) {
+            return [false, `No Coroutine with the name [${name}] exists!`];
+        }
+        function createCallbackFromString(codeString) {
+            try {
+                const func = new Function('data', codeString);
+                return func;
+            } catch (error) {
+                console.error("Error creating callback function:", error);
+                return null;
+            }
+        }
+        let func = createCallbackFromString(params.join(" "));
+        if (!func) return [false, 'Error creating Coroutine function, edit.'];
+        let tmp = new Coroutine(func);
+        this.coroutines[name] = tmp;
+        return [true, `Edited Coroutine "${name}"`];
+    }
+}
+
+class NJSRun {
+    static description = "Runs an existing coroutine created by <strong>njs-make</strong>. \n<i>Syntax: 'njs-run [name]'</i>";
+    static async execute(window, dir, ...params) {
+        let name = params.splice(0, 1)[0];
+        if (NJSMake.coroutines[name] == undefined) {
+            return [false, `No Coroutine with the name [${name}] exists!`];
+        }
+        NJSMake.coroutines[name].start();
+        return [true, `Coroutine "${name}" is now running.`];
+    }
+}
+
+class NJSStop {
+    static description = "Runs an existing coroutine created by <strong>njs-make</strong>. \n<i>Syntax: 'njs-run [name]'</i>";
+    static async execute(window, dir, ...params) {
+        let name = params.splice(0, 1)[0];
+        if (NJSMake.coroutines[name] == undefined) {
+            return [false, `No Coroutine with the name [${name}] exists!`];
+        }
+        NJSMake.coroutines[name].stop();
+        return [true, `Coroutine "${name}" stopped.`];
     }
 }
 
@@ -89,6 +138,9 @@ const commandDict = {
     'exec': Exec,
     'njs-make': NJSMake,
     'njs-del': NJSDel,
+    'njs-edit': NJSEdit,
+    'njs-run': NJSRun,
+    'njs-stop': NJSStop,
     'help': Help,
     'cls': Clear
 }
