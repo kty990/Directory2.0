@@ -51,6 +51,19 @@ class NJSMake {
     }
 }
 
+class NJSDel {
+    static description = "Deletes an existing coroutine created by <strong>njs-make</strong>. \n<i>Syntax: 'njs-del [name]'</i>";
+    static async execute(window, dir, ...params) {
+        let name = params.splice(0, 1)[0];
+        if (NJSMake.coroutines[name] == undefined) {
+            return [false, `No Coroutine with the name [${name}] exists!`];
+        }
+        NJSMake.coroutines[name].stop();
+        NJSMake.coroutines[name] = undefined;
+        return [true];
+    }
+}
+
 class Help {
     static description = "Displays information regarding each command present in this terminal.";
     static async execute(window, dir, ...params) {
@@ -75,6 +88,7 @@ const commandDict = {
     'ytdown': YTDownload,
     'exec': Exec,
     'njs-make': NJSMake,
+    'njs-del': NJSDel,
     'help': Help,
     'cls': Clear
 }
