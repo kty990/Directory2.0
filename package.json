@@ -2,15 +2,35 @@
   "name": "directory2.0",
   "version": "0.0.1",
   "description": "A developer's best friend, an intended better version of the windows file explorer.",
-  "main": "index.js",
+  "main": "./src/js/index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron ./src/js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "electron-builder",
+    "package": "electron-packager . \"Directory 2.0\" --platform=win32 --arch=x64 --out=build/ --overwrite"
+  },
+  "build": {
+    "appId": "me.bot.maker",
+    "productName": "Directory 2.0",
+    "directories": {
+      "output": "installers"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "./src/images/logo.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "license": "license.md"
+    }
   },
   "author": "Ty Kutcher",
   "license": "MIT",
   "dependencies": {
-    "directory2.0": "file:",
     "source-map-support": "^0.5.21",
     "ytdl-core": "^4.11.5"
   },
