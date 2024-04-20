@@ -4,6 +4,7 @@ const fs = require('fs');
 const directory = require('./directory');
 const history = require("../../history.json");
 const { commandDict } = require("./commands");
+const os = require('os');
 
 let devToolsOpened = false;
 
@@ -12,46 +13,6 @@ function addHistory(url) {
     history.steps.push(url);
     history.index++;
     fs.writeFile("../../history.json", JSON.stringify(history, null, 2), () => { });
-}
-
-class Coroutine {
-    constructor(callback) {
-        this.callback = callback;
-        this.onError = (error) => console.error(`Coroutine Error: ${error}`);
-        this.isRunning = false;
-        this.generator = null;
-    }
-
-    start() {
-        if (!this.isRunning) {
-            this.isRunning = true;
-            this.generator = this.callback(); // Recreate the generator
-            this.resume();
-            // console.log(`Coroutine started!`);
-        }
-    }
-
-    stop() {
-        this.isRunning = false;
-        // console.log(`Coroutine stopped!`);
-    }
-
-    resume() {
-        if (!this.isRunning) return;
-
-        try {
-            const { value, done } = this.generator.next();
-
-            if (!done) {
-                // Schedule the next iteration of the generator
-                setTimeout(() => this.resume(), 0);
-            }
-        } catch (error) {
-            // Handle errors using the onError function
-            this.onError(`Error: ${error}`);
-            this.stop(); // Stop the coroutine on error
-        }
-    }
 }
 
 class GraphicsWindow {
@@ -207,6 +168,7 @@ ipcMain.on("runCommand", async (ev, data) => {
         data.splice(0, 1);
         try {
             let result = await Array.from(Object.values(commandDict))[testIndex].execute(graphicsWindow.window, history.steps[history.index], data);
+            console.log(result);
             graphicsWindow.window.webContents.send("runCommand", result);
         } catch (e) {
             graphicsWindow.window.webContents.send("runCommand", e);
@@ -215,4 +177,8 @@ ipcMain.on("runCommand", async (ev, data) => {
     } else {
         graphicsWindow.window.webContents.send("runCommand", [false, `Unable to find command ${data[0]}`]);
     }
+})
+
+ipcMain.on("getUser", () => {
+    graphicsWindow.window.webContents.send("getUser", os.userInfo().username);
 })

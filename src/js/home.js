@@ -177,3 +177,40 @@ window.api.on("load", (url) => {
 window.addEventListener("DOMContentLoaded", () => {
     window.api.send("load");
 })
+
+// --------------------------------------------------------------------------------------------------
+// ==================================================================================================
+// --------------------------------------------------------------------------------------------------
+
+const desktop = document.getElementById("desktop");
+const downloads = document.getElementById("downloads");
+const docs = document.getElementById('documents');
+const music = document.getElementById("music");
+
+desktop.addEventListener("click", async () => {
+    let user = await window.api.invoke("getUser");
+    setURL(`C:\\Users\\${user}\\OneDrive\\Desktop`);
+    displayURL();
+})
+
+downloads.addEventListener("click", async () => {
+    let user = await window.api.invoke("getUser");
+    setURL(`C:\\Users\\${user}\\Downloads`);
+    displayURL();
+})
+
+docs.addEventListener("click", async () => {
+    let user = await window.api.invoke("getUser");
+    setURL(`C:\\Users\\${user}\\OneDrive\\Documents`);
+    displayURL();
+})
+
+music.addEventListener("click", async () => {
+    let user = await window.api.invoke("getUser");
+    setURL(`C:\\Users\\${user}\\OneDrive\\Music`);
+    displayURL();
+})
+
+/**
+ * Note for later: Add check box for 'OneDrive'
+ */

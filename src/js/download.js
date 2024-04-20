@@ -7,36 +7,43 @@ function sanitizeFileName(fileName) {
     return fileName.replace(/[^\w.-]/g, '_'); // Replace non-word characters except for '.', '-' with '_'
 }
 
-async function download(currentDirectory, url) {
-
-    ytdl.getInfo(url).then(async info => {
-
-        // Log video information
-        console.log('Video Title:', info.videoDetails.title);
-        console.log('Video Author:', info.videoDetails.author.name);
-        console.log('Video Description:', info.videoDetails.description);
-
-        let filePath = `${currentDirectory}_${info.videoDetails.title}`;
-        if (!(filePath.toLowerCase().endsWith(".mp4") || filePath.toLowerCase().endsWith(".mp3"))) {
-            filePath += ".mp4";
+async function download(window, dir, url) {
+    return new Promise((resolve, reject) => {
+        let currentDirectory = dir;
+        if (!currentDirectory.endsWith("/")) {
+            currentDirectory += "/"
         }
-        // Download video
-        const fileStream = fs.createWriteStream(sanitizeFileName(filePath));
+        ytdl.getInfo(url).then(async info => {
 
-        ytdl(url)
-            .pipe(fileStream)
-            .on('finish', () => {
-                console.log('Video downloaded successfully!');
-                return true;
-            })
-            .on('error', (err) => {
-                console.error('Error downloading video:', err);
-                return [false, err];
-            });
-    }).catch(e => {
-        console.log(url, e);
-        return [false, e];
-    });
+            // Log video information
+            window.webContents.send("output_download", info.videoDetails);
+
+            // ('Video Title:', info.videoDetails.title);
+            // console.log('Video Author:', info.videoDetails.author.name);
+            // console.log('Video Description:', info.videoDetails.description);
+
+            let filePath = `${currentDirectory}${sanitizeFileName(info.videoDetails.title)}.mp4`;
+            // Download video
+            const fileStream = fs.createWriteStream(filePath);
+
+            ytdl(url)
+                .pipe(fileStream)
+                .on('finish', () => {
+                    console.log('Video downloaded successfully to ' + filePath + '!');
+                    resolve([true]);
+                    return;
+                })
+                .on('error', (err) => {
+                    console.error('Error downloading video:', err);
+                    resolve([false, err]);
+                    return;
+                });
+        }).catch(e => {
+            console.log(url, e);
+            resolve([false, e]);
+            return;
+        });
+    })
 }
 
 module.exports = { download };

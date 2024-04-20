@@ -175,6 +175,7 @@ body {
     height: 70vh;
     background-color: var(--menu);
     overflow: auto;
+    overflow-x: hidden;
 }
 
 #labels {
@@ -239,6 +240,31 @@ body {
 
 
 
+#quickDir {
+    position: fixed;
+    left: 625px;
+    top: 130px;
+    width: 50px;
+    height: fit-content;
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+#quickDir>img {
+    /* height: 40px; */
+    width: 40px;
+}
+
+#quickDir>img:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+#desktop {
+    border-radius: 50%;
+    filter: brightness(0.5);
+}
 
 .error,
 .result {
