@@ -61,7 +61,7 @@ class GraphicsWindow {
 
         this.window.setMenu(menu);
 
-        this.window.loadFile('../html/home.html');
+        this.window.loadFile('./src/html/home.html'); // './src/html/home.html' = Production, '../html/home.html' = Development
 
         this.window.on('closed', () => {
             this.window = null;
