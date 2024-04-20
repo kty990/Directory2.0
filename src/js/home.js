@@ -79,15 +79,31 @@ function convertSize(bytes) {
  * @returns {string}
  */
 function newEntry(name, modified, type, size, hidden) {
-    return `<div class="entry">
-        <p id="name">${name}</p>
-        <p id="modified">${modified}</p>
-        <p style="color:var(--border); filter:opacity(0.5);" id="type">${(type || 'File').toUpperCase()}</p>
-        <p id="size">${convertSize(size)}</p>
-        <div id="hidden">
-            <div${(hidden) ? ' style="background-color: #00cc00;"' : ''}></div>
-        </div>
-    </div>`
+    let div = document.createElement("div");
+    div.classList.add('entry');
+    let namep = document.createElement("p");
+    namep.textContent = name;
+    namep.id = 'name';
+    let modp = document.createElement("p");
+    modp.textContent = modified;
+    modp.id = 'modified';
+    let extp = document.createElement("p");
+    extp.textContent = type;
+    extp.id = 'type';
+    let sizep = document.createElement("p");
+    sizep.textContent = `${convertSize(size)}`;
+    sizep.id = 'size';
+    let hiddenDiv = document.createElement("div");
+    hiddenDiv.id = 'hidden';
+    let subhidden = document.createElement("div");
+    subhidden.style.backgroundColor = (hidden) ? ' style="background-color: #00cc00;"' : '';
+    hiddenDiv.appendChild(subhidden);
+    div.appendChild(namep);
+    div.appendChild(modp);
+    div.appendChild(extp);
+    div.appendChild(sizep);
+    div.appendChild(hiddenDiv);
+    return div;
 }
 
 function msToDate(ms) {
@@ -119,21 +135,20 @@ async function displayURL() {
             <p>Hidden</p>
         </div>`
     const files = await window.api.invoke("getFiles", url.textContent);
+
+    let isClicked = '';
+    let isClickedElement = null;
+
     for (const file of files) {
-        let t = (file.type == 'Directory') ? 'Folder' : file.path.split(".")[1];
+        let t = (file.type == 'Directory') ? 'Folder' : file.path.split(".")[1] || 'FILE';
         let name = file.path.split("\\");
         name = name[name.length - 1].split(".")[0];
         let mod = msToDate(file.mod);
         let size = file.size;
         let hidden = file.hidden;
         const e = newEntry(name, mod, t, size, hidden);
-        data.innerHTML += e;
+        data.appendChild(e);
 
-    }
-    const entries = document.getElementsByClassName("entry");
-    let isClicked = '';
-    let isClickedElement = null;
-    for (let e of entries) {
         e.addEventListener("click", async () => {
             let shouldAdd = !url.textContent.endsWith("\\");
             const targetURL = url.textContent + `${shouldAdd == true ? '\\' : ''}${e.querySelector("#name").textContent}`;
@@ -144,13 +159,17 @@ async function displayURL() {
                 isClicked = targetURL;
                 isClickedElement = e;
                 isClickedElement.style.backgroundColor = "var(--active)";
-                console.log(`Set background to: ${e.style.backgroundColor}`);
             } else {
-                await setURL(targetURL);
-                displayURL();
+                if (file.type != "Directory") {
+                    window.api.send("openFile", file);
+                } else {
+                    await setURL(targetURL);
+                    displayURL();
+                }
             }
         })
     }
+
 }
 
 // --------------------------------------------------------------------------------------------------

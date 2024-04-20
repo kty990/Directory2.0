@@ -182,3 +182,15 @@ ipcMain.on("runCommand", async (ev, data) => {
 ipcMain.on("getUser", () => {
     graphicsWindow.window.webContents.send("getUser", os.userInfo().username);
 })
+
+
+
+ipcMain.on("openFile", (ev, data) => {
+    // filesArray.push({ path: filePath, type: 'Shortcut', hidden: isHidden, size: stat.size, mod: stat.mtimeMs });
+    let file = data;
+    console.log(data);
+    if (file.type == "Shortcut") {
+        commandDict['exec'].execute(null, history.steps[history.index], `start ${file.targetPath || file.path}`);
+    }
+
+})

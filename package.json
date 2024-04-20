@@ -1,7 +1,7 @@
 {
   "name": "directory2.0",
   "version": "0.0.1",
-  "description": "",
+  "description": "A developer's best friend, an intended better version of the windows file explorer.",
   "main": "index.js",
   "scripts": {
     "start": "electron ./src/js",
@@ -11,8 +11,11 @@
   "license": "MIT",
   "dependencies": {
     "directory2.0": "file:",
-    "electron": "^29.1.3",
     "source-map-support": "^0.5.21",
     "ytdl-core": "^4.11.5"
+  },
+  "devDependencies": {
+    "electron": "^29.1.3",
+    "electron-builder": "^24.13.3"
   }
 }
